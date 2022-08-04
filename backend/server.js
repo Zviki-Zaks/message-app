@@ -3,7 +3,7 @@ const cors = require('cors')
 const path = require('path')
 const expressSession = require('express-session')
 
-
+//CREATE SERVER
 const app = express()
 const http = require('http').createServer(app)
 
@@ -17,6 +17,8 @@ const session = expressSession({
 app.use(express.json())
 app.use(session)
 
+
+//PORT
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, 'public')))
 } else {
@@ -28,6 +30,16 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 
+//ROUTES
+const userRoute = require('./api/user/user.routes')
+const authRoute = require('./api/auth/auth.routes')
+
+const setupAsyncLocalStorage = require('./middlewares/setupAls.middleware')
+app.all('*', setupAsyncLocalStorage)
+
+app.use('/api/user', userRoute)
+app.use('/api/auth', authRoute)
+
 app.get('/**', (req, res) => {
     if (process.env.NODE_ENV === 'production') {
         res.sendFile(path.join(__dirname, 'public', 'index.html'))
@@ -36,7 +48,9 @@ app.get('/**', (req, res) => {
     }
 })
 
+const logger = require('./services/logger.service')
 const port = process.env.PORT || 3030
 app.listen(port, () => {
     console.log(`Server is listening on port: ${port}`)
+    logger.info('Server is running on port: ' + port)
 })
