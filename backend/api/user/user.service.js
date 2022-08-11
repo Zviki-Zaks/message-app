@@ -1,26 +1,37 @@
+const { ObjectId } = require('mongodb')
+
 const dbService = require('../../services/db.service')
 const logger = require('../../services/logger.service')
 
 module.exports = {
-    getUsers,
+    query,
     getUserById,
     getUserByUsername,
-    addUser,
-    updateUser,
-    deleteUser,
+    add,
+    update,
+    remove,
 }
-async function getUsers() {
+async function query() {
     try {
-
+        const collection = await dbService.getCollection('user')
+        const users = await collection.find({}).toArray()
+        users.forEach(user => {
+            delete user.password
+        });
+        return users
     } catch (err) {
-
+        logger.error('cannot find users', err)
+        throw err
     }
 }
-async function getUserById() {
+async function getUserById(userId) {
     try {
-
+        const collection = await dbService.getCollection('user')
+        const user = await collection.findOne({ _id: ObjectId(userId) })
+        return user
     } catch (err) {
-
+        logger.error(`while finding user ${userId}`, err)
+        throw err
     }
 }
 async function getUserByUsername(username) {
@@ -33,10 +44,10 @@ async function getUserByUsername(username) {
         throw err
     }
 }
-async function addUser({ firstName, lastName, username, password }) {
+async function add({ firstName, lastName, username, password }) {
     try {
         const userToAdd = {
-            ..._getUser(),
+            ..._getEmptyUser(),
             firstName,
             lastName,
             username,
@@ -49,14 +60,14 @@ async function addUser({ firstName, lastName, username, password }) {
 
     }
 }
-async function updateUser() {
+async function update() {
     try {
 
     } catch (err) {
 
     }
 }
-async function deleteUser() {
+async function remove() {
     try {
 
     } catch (error) {
@@ -64,7 +75,7 @@ async function deleteUser() {
     }
 }
 
-function _getUser() {
+function _getEmptyUser() {
     return {
         members: [],
         groups: [],

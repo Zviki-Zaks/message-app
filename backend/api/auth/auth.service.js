@@ -13,7 +13,7 @@ async function signup(firstName, lastName, username, password) {
     if (userExist) return Promise.reject('Username already taken')
 
     const hash = await bcrypt.hash(password, saltRounds)
-    return userService.addUser({ firstName, lastName, username, password: hash })
+    return userService.add({ firstName, lastName, username, password: hash })
 
 }
 
@@ -25,7 +25,6 @@ async function login(username, password) {
     if (!user || !match) return Promise.reject('Invalid username or password')
 
     delete user.password
-    user._id = user._id.toString()
     return user
 }
 
