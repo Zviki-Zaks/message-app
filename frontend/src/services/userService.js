@@ -1,4 +1,5 @@
 import { storageService } from "./asyncService"
+import { httpService } from "./http.service"
 
 export const userService = {
     login,
@@ -15,17 +16,29 @@ const MSGS_USERS = 'MSGS_USERS'
 const MSGS_USER = 'MSGS_USER'
 
 async function getUsers() {
-    const users = await storageService.query(MSGS_USERS)
-    return new Promise((resolve, reject) => {
-        resolve(users)
-    })
+    // const users = await storageService.query(MSGS_USERS)
+    // return new Promise((resolve, reject) => {
+    //     resolve(users)
+    // })
+    try {
+        const user = await httpService.get('user')
+        return _saveLoggedInUser(user)
+    } catch (err) {
+        throw err
+    }
 }
 
 async function getUser(userId) {
-    const user = await storageService.get(MSGS_USERS, userId)
-    return new Promise((resolve, reject) => {
-        resolve(user)
-    })
+    // const user = await storageService.get(MSGS_USERS, userId)
+    // return new Promise((resolve, reject) => {
+    //     resolve(user)
+    // })
+    try {
+        const user = await httpService.get('user', userId)
+        return _saveLoggedInUser(user)
+    } catch (err) {
+        throw err
+    }
 
 }
 
@@ -46,31 +59,49 @@ async function removeUser(userId) {
 }
 
 async function login(userCred) {
-    console.log(userCred)
-    const users = await storageService.query(MSGS_USERS)
-    const user = users.find(user => user.username === userCred.username && user.password === userCred.password)
-    console.log('user', user)
-    return new Promise((resolve, reject) => {
-        if (user) {
-            const { _id, username, firstName } = user
-            _saveLoggedInUser({ _id, username, firstName })
-            resolve(user)
-        } else reject('Cant login')
-    })
+    // const users = await storageService.query(MSGS_USERS)
+    // const user = users.find(user => user.username === userCred.username && user.password === userCred.password)
+    // return new Promise((resolve, reject) => {
+    //     if (user) {
+    //         const { _id, username, firstName } = user
+    //         _saveLoggedInUser({ _id, username, firstName })
+    //         resolve(user)
+    //     } else reject('Cant login')
+    // })
+    try {
+        const user = await httpService.post('auth/login', userCred)
+        return _saveLoggedInUser(user)
+    } catch (err) {
+        throw err
+    }
 }
+
 async function logout() {
-    return new Promise((resolve, reject) => {
-        _saveLoggedInUser()
-        resolve()
-    })
+    // return new Promise((resolve, reject) => {
+    //     _saveLoggedInUser()
+    //     resolve()
+    // })
+    try {
+        const user = await httpService.post('auth/logout')
+        return _saveLoggedInUser(user)
+    } catch (err) {
+        throw err
+    }
 }
+
 async function signup(userCred) {
-    const user = await storageService.post(MSGS_USERS, userCred)
-    return new Promise((resolve, reject) => {
-        const { _id, username, firstName } = user
-        _saveLoggedInUser({ _id, username, firstName })
-        resolve(user)
-    })
+    // const user = await storageService.post(MSGS_USERS, userCred)
+    // return new Promise((resolve, reject) => {
+    //     const { _id, username, firstName } = user
+    //     _saveLoggedInUser({ _id, username, firstName })
+    //     resolve(user)
+    // })
+    try {
+        const user = await httpService.post('auth/signup', userCred)
+        return _saveLoggedInUser(user)
+    } catch (err) {
+        throw err
+    }
 }
 async function getLoggedInUser() {
     return _loadLoggedInUser()
@@ -78,6 +109,7 @@ async function getLoggedInUser() {
 
 function _saveLoggedInUser(user = null) {
     sessionStorage.setItem(MSGS_USER, JSON.stringify(user))
+    return user
 }
 function _loadLoggedInUser() {
     return JSON.parse(sessionStorage.getItem(MSGS_USER))
