@@ -1,5 +1,6 @@
 import { storageService } from "./asyncService"
-import { httpService } from "./http.service"
+import { httpService } from "./httpService"
+// import { socketService } from "./socketService"
 
 export const userService = {
     login,
@@ -70,6 +71,8 @@ async function login(userCred) {
     // })
     try {
         const user = await httpService.post('auth/login', userCred)
+        console.log('user', user)
+        // socketService.emit('set-user-socket', user._id)
         return _saveLoggedInUser(user)
     } catch (err) {
         throw err

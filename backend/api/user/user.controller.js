@@ -2,7 +2,6 @@ const userService = require('./user.service')
 
 
 async function getUsers(req, res) {
-    console.log('req', req)
     try {
         const users = await userService.query()
         res.send(users)

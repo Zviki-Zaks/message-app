@@ -2,12 +2,13 @@ const express = require('express')
 const cors = require('cors')
 const path = require('path')
 const expressSession = require('express-session')
+// const { Server } = require('socket.io')
 
 //CREATE SERVER
 const app = express()
 const http = require('http').createServer(app)
 
-// Express App Config
+// EXPRESS APP CONFIG
 const session = expressSession({
     secret: 'messaging',
     resave: false,
@@ -34,11 +35,28 @@ if (process.env.NODE_ENV === 'production') {
 const userRoute = require('./api/user/user.routes')
 const authRoute = require('./api/auth/auth.routes')
 
+const { connectSockets } = require('./services/socket.service')
+
 const setupAsyncLocalStorage = require('./middlewares/setupAls.middleware')
 app.all('*', setupAsyncLocalStorage)
 
 app.use('/api/user', userRoute)
 app.use('/api/auth', authRoute)
+
+//CONNECT TO SOCKET.IO
+connectSockets(http, session)
+// const socketIo = require('socket.io')
+// const io = socketIo(http, {
+//     cors: {
+//         origin: '*',
+//     }
+// })
+// io.on('connection', socket => {
+//     console.log('New socket', socket.id)
+//     socket.on('disconnect', socket => {
+//         console.log('Someone disconnected')
+//     })
+// })
 
 app.get('/**', (req, res) => {
     if (process.env.NODE_ENV === 'production') {
