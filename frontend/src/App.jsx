@@ -6,14 +6,9 @@ import { AppHeader } from './components/AppHeader/AppHeader';
 import { Home } from './pages/Home/Home';
 import { Login } from './pages/Login/Login';
 import { UsersPage } from './pages/UsersPage/UsersPage';
-import { socketService } from './services/socketService';
 
 function App() {
-  // socketService.setup()
 
-  useEffect(() => {
-    socketService.emit('connected', 'hi')
-  }, [])
   return (
     <div className="App">
       <AppHeader />

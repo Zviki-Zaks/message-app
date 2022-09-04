@@ -2,10 +2,8 @@ import { userService } from "../../services/userService"
 
 export const loadUsers = () => {
     return async (dispatch) => {
-        console.log('load')
         try {
             const users = await userService.getUsers()
-            console.log('users', users)
             dispatch({ type: 'SET_USERS', users })
         } catch (err) {
             console.log('err', err)
@@ -77,6 +75,17 @@ export const removeUser = (userId) => {
         try {
             await userService.removeUser(userId)
             dispatch({ type: 'REMOVE_USER', userId })
+        } catch (err) {
+            console.log('err', err)
+        }
+    }
+}
+
+export const addMember = (memberId) => {
+    return async (dispatch) => {
+        try {
+            const member = await userService.addMember(memberId)
+            dispatch({ type: 'ADD_MEMBER', member })
         } catch (err) {
             console.log('err', err)
         }

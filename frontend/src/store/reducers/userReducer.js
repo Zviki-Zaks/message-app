@@ -17,10 +17,14 @@ export function userReducer(state = initialState, action) {
             return { ...state, loggedInUser: action.user };
 
         case 'SAVE_USER':
+            if (!state.users) return state
             return { ...state, users: [...state.users.filter(user => user._id !== action.user._id), action.user] };
 
         case 'REMOVE_USER':
             return { ...state, users: [...state.users.filter(user => user._id !== action.user._id)] };
+
+        case 'ADD_MEMBER':
+            return { ...state, loggedInUser: { ...state.loggedInUser, members: [...state.loggedInUser.members, action.member] } }
 
         default:
             return state;

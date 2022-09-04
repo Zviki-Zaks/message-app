@@ -46,9 +46,22 @@ async function deleteUser(req, res) {
     }
 }
 
+async function addMember(req, res) {
+    try {
+        const { memberId } = req.body
+        const { _id: userId } = req.session.user
+        console.log('memberId', memberId)
+        const member = await userService.addMember(userId, memberId)
+        res.json(member)
+    } catch (err) {
+        res.status(500).send({ err: 'Failed to add member' })
+    }
+}
+
 module.exports = {
     getUsers,
     getUser,
     updateUser,
     deleteUser,
+    addMember
 }

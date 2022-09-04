@@ -11,6 +11,7 @@ export const userService = {
     getUser,
     removeUser,
     updateUser,
+    addMember
 }
 
 const MSGS_USERS = 'MSGS_USERS'
@@ -59,6 +60,14 @@ async function removeUser(userId) {
 
 }
 
+async function addMember(memberId) {
+    try {
+        const member = await httpService.put('user/add-member', { memberId })
+    } catch (err) {
+        throw err
+    }
+}
+
 async function login(userCred) {
     // const users = await storageService.query(MSGS_USERS)
     // const user = users.find(user => user.username === userCred.username && user.password === userCred.password)
@@ -71,8 +80,7 @@ async function login(userCred) {
     // })
     try {
         const user = await httpService.post('auth/login', userCred)
-        console.log('user', user)
-        // socketService.emit('set-user-socket', user._id)
+        socketService.emit('set-user-socket', user._id)
         return _saveLoggedInUser(user)
     } catch (err) {
         throw err
@@ -85,8 +93,9 @@ async function logout() {
     //     resolve()
     // })
     try {
-        const user = await httpService.post('auth/logout')
-        return _saveLoggedInUser(user)
+        const logoutMsg = await httpService.post('auth/logout')
+        socketService.emit('unset-user-socket')
+        return _saveLoggedInUser()
     } catch (err) {
         throw err
     }
@@ -101,6 +110,7 @@ async function signup(userCred) {
     // })
     try {
         const user = await httpService.post('auth/signup', userCred)
+        socketService.emit('add-user', user)
         return _saveLoggedInUser(user)
     } catch (err) {
         throw err

@@ -10,15 +10,13 @@ module.exports = {
     add,
     update,
     remove,
+    addMember
 }
 async function query() {
     try {
         const collection = await dbService.getCollection('user')
         const users = await collection.find({}).toArray()
-        users.forEach(user => {
-            delete user.password
-        });
-        return users
+        return users.map(user => _getMiniUser(user))
     } catch (err) {
         logger.error('cannot find users', err)
         throw err
@@ -73,6 +71,23 @@ async function remove() {
     } catch (error) {
 
     }
+}
+
+async function addMember(userId, memberId) {
+    const user = await getUserById(userId)
+    const member = await getUserById(memberId)
+    console.log('user', user)
+    console.log('member', member)
+    user.members.push(_getMiniUser(member))
+    member.members.push(_getMiniUser(user))
+    const collection = await dbService.getCollection('user')
+    await collection.updateOne({ _id: user._id }, { $set: user })
+    await collection.updateOne({ _id: member._id }, { $set: member })
+    return _getMiniUser(member)
+}
+
+function _getMiniUser({ _id, firstName, lastName, username }) {
+    return { _id, firstName, lastName, username }
 }
 
 function _getEmptyUser() {
