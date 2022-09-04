@@ -45,18 +45,6 @@ app.use('/api/auth', authRoute)
 
 //CONNECT TO SOCKET.IO
 connectSockets(http, session)
-// const socketIo = require('socket.io')
-// const io = socketIo(http, {
-//     cors: {
-//         origin: '*',
-//     }
-// })
-// io.on('connection', socket => {
-//     console.log('New socket', socket.id)
-//     socket.on('disconnect', socket => {
-//         console.log('Someone disconnected')
-//     })
-// })
 
 app.get('/**', (req, res) => {
     if (process.env.NODE_ENV === 'production') {
@@ -68,7 +56,9 @@ app.get('/**', (req, res) => {
 
 const logger = require('./services/logger.service')
 const port = process.env.PORT || 3030
-app.listen(port, () => {
+http.listen(port, () => {
     console.log(`Server is listening on port: ${port}`)
     logger.info('Server is running on port: ' + port)
 })
+
+

@@ -1,4 +1,5 @@
 
+import { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import './assets/scss/global.scss';
 import { AppHeader } from './components/AppHeader/AppHeader';
@@ -10,10 +11,9 @@ import { socketService } from './services/socketService';
 function App() {
   // socketService.setup()
 
-  // socketService.on('connected', (data) => {
-  //   console.log(data)
-  //   console.log('connected')
-  // })
+  useEffect(() => {
+    socketService.emit('connected', 'hi')
+  }, [])
   return (
     <div className="App">
       <AppHeader />

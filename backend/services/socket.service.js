@@ -6,9 +6,11 @@ function connectSockets(http, session) {
             origin: '*',
         }
     })
-    console.log('gIo', gIo)
     gIo.on('connection', socket => {
         console.log('New socket', socket.id)
+        socket.on('connected', data => {
+            console.log('connected', data)
+        })
         socket.on('disconnect', socket => {
             console.log('Someone disconnected')
         })
@@ -25,6 +27,7 @@ function connectSockets(http, session) {
                 socket.broadcast.emit('message received', chat)
             }
         })
+
     })
 }
 

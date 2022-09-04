@@ -3,13 +3,13 @@ import io from 'socket.io-client'
 
 const baseUrl = (process.env.NODE_ENV === 'production') ? '' : '//127.0.0.1:3030/'
 export const socketService = createSocketService()
-
+console.log('hi')
 socketService.setup()
 
 function createSocketService() {
   var socket = null;
   const socketService = {
-    async setup() {
+    setup() {
       console.log(baseUrl)
       socket = io(baseUrl)
       console.log('socket', socket)
