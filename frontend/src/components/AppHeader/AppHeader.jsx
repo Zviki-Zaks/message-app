@@ -11,6 +11,7 @@ export const AppHeader = () => {
                         <li>
                             <NavLink to={'/login'}>Login</NavLink>
                             <NavLink to={'/users'}>Users</NavLink>
+                            <NavLink to={'/chat'}>Chat</NavLink>
                         </li>
                     </ul>
                 </nav>
